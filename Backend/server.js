@@ -1,9 +1,11 @@
+import express from "express"
 // to read input from console
 import yargs from "yargs";
 // utility that helps read args
 import {hideBin} from "yargs/helpers"
 import dotenv from "dotenv"
 
+import { connectDB } from "./src/config/db.js";
 import initRepo from './src/controllers/init.js'
 import add from './src/controllers/add.js'
 import push from './src/controllers/push.js'
@@ -12,8 +14,12 @@ import commit from './src/controllers/commit.js'
 import revert from './src/controllers/revert.js'
 
 dotenv.config();
+
+const app=express();
+
 // command and a description with parameter list and function
 yargs(hideBin(process.argv))
+    .command('start','Start Server',await startServer())
     .command('init',"Initialize a new repository", {}, initRepo)
     .command('add <file>',"Add files to repository", (yargs)=>{
         yargs.positional("file",{
@@ -43,3 +49,14 @@ yargs(hideBin(process.argv))
     })
     .demandCommand(1,"You need to give at least one command") //requirement, command would work even wo this
     .help().argv;
+
+async function startServer(){
+    const port=process.env.PORT || 3000;
+
+    await connectDB().then(()=>{
+    app.listen((port,()=>{
+        console.log(`Server started at port ${port}`);
+    }))}).catch((err)=>{
+    console.log("Could not connect to server :",err);
+    })
+}

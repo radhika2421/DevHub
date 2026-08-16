@@ -26,7 +26,7 @@ async function pull() {
             // pop returns the last element, that is abc
             // so we get /.devHub/commits/abc
             const commitDir = path.join(commitsPath, path.dirname(key).split("/").pop());
-            // thsi creates the directory that we wanted
+            // this creates the directory that we wanted
             await fs.mkdir(commitDir, { recursive: true });
 
             const params = {
