@@ -4,6 +4,13 @@ import yargs from "yargs";
 // utility that helps read args
 import {hideBin} from "yargs/helpers"
 import dotenv from "dotenv"
+import mongoose from "mongoose";
+import cors from "cors"
+import bodyParser from "body-parser";
+import http from "http";
+// for real time updates
+import { Server } from "socket.io";
+import mainRouter from './src/routes/mainRouter.js'
 
 import { connectDB } from "./src/config/db.js";
 import initRepo from './src/controllers/init.js'
@@ -50,13 +57,53 @@ yargs(hideBin(process.argv))
     .demandCommand(1,"You need to give at least one command") //requirement, command would work even wo this
     .help().argv;
 
+    // Server creation
 async function startServer(){
+    app.use(bodyParser.json());
+    app.use(express.json());
+
     const port=process.env.PORT || 3000;
 
     await connectDB().then(()=>{
-    app.listen((port,()=>{
-        console.log(`Server started at port ${port}`);
-    }))}).catch((err)=>{
+        console.log("Connected to MongoDB");
+    }).catch((err)=>{
     console.log("Could not connect to server :",err);
+    })
+
+    // not secure
+    app.use(cors({
+        //  * = we are accepting requests from all origins
+        origin: "*"
+    }))
+
+    app.use('/api',mainRouter);
+
+    // Socket
+    const httpServer=http.createServer(app);
+    const io=new Server(httpServer,{
+        cors:{
+            origin: "*",
+            methods: ["GET","POST"]
+        }
+    });
+    // anyone logged in will have access to this socket
+    const user="test" //temp, will be updated by logged in user
+    io.on("connection",(socket)=>{
+        socket.on("joinRoom",(userID)=>{
+            user=userIDl
+            console.log("======")
+            console.log(user)
+            console.log("======")
+            socket.join(userID)
+        });
+    })
+
+    const db=mongoose.connection;
+    db.once("open",async ()=>{
+        console.log("CRUD operations called");
+    })
+
+    httpServer.listen(port,()=>{
+        console.log(`Server started at port ${port}`);
     })
 }
