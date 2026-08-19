@@ -3,11 +3,7 @@ import userRouter from './userRouter.js';
 import repoRouter from './repoRouter.js';
 import issueRouter from './issueRouter.js';
 
-const mainRouter=express();
-
-mainRouter.get("/",(req,res)=>{
-        res.send("Hello!")
-    })
+const mainRouter=express.Router();
 
 mainRouter.use("/user",userRouter);
 mainRouter.use("/repo",repoRouter)

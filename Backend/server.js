@@ -59,7 +59,9 @@ yargs(hideBin(process.argv))
 
     // Server creation
 async function startServer(){
+    // to parse through json files
     app.use(bodyParser.json());
+    // converts json request body into js object for endpoints to read
     app.use(express.json());
 
     const port=process.env.PORT || 3000;

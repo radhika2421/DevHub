@@ -1,11 +1,11 @@
 import express from 'express'
 import { getAllUsers, login, signup, getUserProfile, updateUserProfile, deleteUserProfile } from '../controllers/userController.js';
 
-const userRouter=express();
+const userRouter=express.Router();
 
-userRouter.get("/allUsers",getAllUsers);
-userRouter.post("/loginUser",login)
-userRouter.post("/signupUser",signup)
+userRouter.get("/all",getAllUsers);
+userRouter.post("/login",login)
+userRouter.post("/signup",signup)
 userRouter.get("/getProfile/:id",getUserProfile)
 userRouter.put("/update/:id",updateUserProfile)
 userRouter.delete("/delete/:id",deleteUserProfile)
